@@ -89,6 +89,9 @@
     <Reference Include="SharpDX, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SharpDX.4.0.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.DirectInput, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.DirectInput.4.0.0\lib\net45\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.XAudio2, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SharpDX.XAudio2.4.0.0\lib\net45\SharpDX.XAudio2.dll</HintPath>
     </Reference>

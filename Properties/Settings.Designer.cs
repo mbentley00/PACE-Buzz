@@ -308,5 +308,17 @@ namespace PACEBuzz.Properties {
                 this["lightCheckShortcutKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PS2")]
+        public string buzzerType {
+            get {
+                return ((string)(this["buzzerType"]));
+            }
+            set {
+                this["buzzerType"] = value;
+            }
+        }
     }
 }

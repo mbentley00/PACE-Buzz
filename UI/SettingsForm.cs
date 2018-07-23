@@ -156,6 +156,17 @@ namespace PACEBuzz
             this.chkBlink.Checked = this.settings.Blink;
             this.chkAlwaysOnTop.Checked = this.settings.AlwaysOnTop;
 
+            if (this.settings.BuzzerType == "Arcade")
+            {
+                this.opPS2.Checked = false;
+                this.opArcade.Checked = true;
+            }
+            else
+            {
+                this.opPS2.Checked = true;
+                this.opArcade.Checked = false;
+            }
+
             this.txtCountdownLength.Text = this.settings.CountdownLengthInSeconds.ToString();
 
             this.cmbSound.Items.Clear();
@@ -392,6 +403,27 @@ namespace PACEBuzz
         private void cmbPreviousBuzzShortcutKey_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.settings.PreviousBuzzShortcutKey = cmbPreviousBuzzShortcutKey.Text;
+        }
+
+        private void opPS2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (opPS2.Checked)
+            {
+                this.settings.BuzzerType = "PS2";
+            }
+        }
+
+        private void opArcade_CheckedChanged(object sender, EventArgs e)
+        {
+            if (opArcade.Checked)
+            {
+                this.settings.BuzzerType = "Arcade";
+            }
+        }
+
+        private void SettingsForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 

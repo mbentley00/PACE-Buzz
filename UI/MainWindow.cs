@@ -10,6 +10,7 @@ using System.Timers;
 using System.Windows.Forms;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
+using SharpDX.DirectInput;
 
 namespace PACEBuzz
 {
@@ -98,6 +99,9 @@ namespace PACEBuzz
         private ToolTip refreshToolTip;
         private ToolTip showLastBuzzToolTip;
 
+        // The current arcade joystick
+        private Joystick arcadeJoystick = null;
+
         public List<Buzzer> Buzzers
         {
             get;
@@ -155,6 +159,48 @@ namespace PACEBuzz
             {
                 this.soundFiles.Add(Path.Combine("Sounds", "beep" + i + ".wav"));
             }
+
+            // Load arcade buzzers -- TODO: Move this elsewhere
+            this.SetupArcadeInputs();
+        }
+
+        private void SetupArcadeInputs()
+        {
+            this.arcadeJoystick = null;
+
+            // Initialize DirectInput
+            var directInput = new DirectInput();
+
+            // Find a Joystick Guid
+            var joystickGuid = Guid.Empty;
+
+            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
+            {
+                joystickGuid = deviceInstance.InstanceGuid;
+            }
+
+            if (joystickGuid != Guid.Empty)
+            {
+                this.arcadeJoystick = new Joystick(directInput, joystickGuid);
+                this.arcadeJoystick.Properties.BufferSize = 128;
+                this.arcadeJoystick.Acquire();
+
+                int buzzerCount = 0;
+
+                // Figure out how many players there are
+                foreach (var joystickObject in this.arcadeJoystick.GetObjects())
+                {
+                    if (joystickObject.Name != null && joystickObject.Name.Contains("Button"))
+                    {
+                        buzzerCount++;
+                    }
+                }
+
+                this.lblBuzzersDetected.Text = buzzerCount + " (max)";
+            }
+
+            Thread arcadeThread = new Thread(new ThreadStart(HandleArcadeBuzzes));
+            arcadeThread.Start();
         }
 
         private void OnFormClosed(object sender, EventArgs args)
@@ -661,6 +707,39 @@ namespace PACEBuzz
                     ButtonStates button = args.Buttons[subBuzzerIndex];
                     Player player = buzzer.Players[subBuzzerIndex];
                     HandleRegularGameBuzzerInput(player, button);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Looks for buzzes on the arcade controllers
+        /// </summary>
+        private void HandleArcadeBuzzes()
+        {
+            while (true)
+            {
+                try
+                {
+                    this.arcadeJoystick.Poll();
+                    var datas = this.arcadeJoystick.GetBufferedData();
+                    foreach (var state in datas)
+                    {
+                        string buzzerName = state.Offset.ToString();
+                        if (buzzerName.Contains("Buttons"))
+                        {
+                            int buzzerIndex = Int32.Parse(buzzerName.Substring(7));
+                            if (state.Value > 0)
+                            {
+                                // This is a buzz
+                                this.SafePlaySound(this.soundFiles[0]);
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
             }
         }
