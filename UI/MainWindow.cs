@@ -6,6 +6,7 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using SharpDX.Multimedia;
@@ -121,7 +122,6 @@ namespace PACEBuzz
         {
             InitializeComponent();
             this.QueuedPlayers = new List<Player>();
-            this.CheckIfBuzzHandsetsPresent();
             this.settings = SettingsWrapper.LoadFromAppConfig();
             this.resetToolTip = new ToolTip();
             this.resetToolTip.SetToolTip(this.imgMinReset, "Reset Buzzer, Get Rid of All Buzzes in Queue");
@@ -136,7 +136,7 @@ namespace PACEBuzz
             this.closeToolTip = new ToolTip();
             this.closeToolTip.SetToolTip(this.imgMinExit, "Exit");
             this.buzzersDetectedToolTip = new ToolTip();
-            this.buzzersDetectedToolTip.SetToolTip(this.lblBuzzersDetected, "# of Buzzers Detected");
+            this.buzzersDetectedToolTip.SetToolTip(this.lblBuzzersDetected, "# of Buzzers Detected. In arcade mode, this may include more than are plugged into control board");
             this.helpToolTip = new ToolTip();
             this.helpToolTip.SetToolTip(this.imgMinHelp, "Help");
             this.lblMinBonusCountdown.Visible = false;
@@ -160,12 +160,16 @@ namespace PACEBuzz
                 this.soundFiles.Add(Path.Combine("Sounds", "beep" + i + ".wav"));
             }
 
-            // Load arcade buzzers -- TODO: Move this elsewhere
-            this.SetupArcadeInputs();
+            this.CheckIfBuzzHandsetsPresent();
         }
 
+        /// <summary>
+        /// Set up the inputs for running in arcade board mode
+        /// </summary>
         private void SetupArcadeInputs()
         {
+            this.Buzzers = new List<Buzzer>();
+
             this.arcadeJoystick = null;
 
             // Initialize DirectInput
@@ -187,6 +191,8 @@ namespace PACEBuzz
 
                 int buzzerCount = 0;
 
+                var buzzer = new Buzzer();
+
                 // Figure out how many players there are
                 foreach (var joystickObject in this.arcadeJoystick.GetObjects())
                 {
@@ -197,10 +203,16 @@ namespace PACEBuzz
                 }
 
                 this.lblBuzzersDetected.Text = buzzerCount + " (max)";
+                buzzer.BuzzerIndex = 0;
+                buzzer.AddPlayers(buzzerCount);
+                this.Buzzers.Add(buzzer);
             }
 
-            Thread arcadeThread = new Thread(new ThreadStart(HandleArcadeBuzzes));
-            arcadeThread.Start();
+            // TODO: Only run this once
+            HandleArcadeBuzzes();
+
+            //Thread arcadeThread = new Thread(new ThreadStart(HandleArcadeBuzzes));
+            //arcadeThread.Start();
         }
 
         private void OnFormClosed(object sender, EventArgs args)
@@ -394,6 +406,11 @@ namespace PACEBuzz
 
             this.showLastBuzzToolTip.RemoveAll();
             this.showLastBuzzToolTip.SetToolTip(this.imgMinForceLastLight, newToolTip);
+
+            if (string.IsNullOrWhiteSpace(this.settings.BuzzerType))
+            {
+                this.settings.BuzzerType = "PS2";
+            }
         }
 
         /// <summary>
@@ -495,7 +512,7 @@ namespace PACEBuzz
         }
 
         /// <summary>
-        /// Called when a new device is detected
+        /// Called when a new PS2 device is detected
         /// </summary>
         protected void OnDeviceArrived(EventArgs args)
         {
@@ -513,7 +530,7 @@ namespace PACEBuzz
         }
 
         /// <summary>
-        /// Overridable 'On' method called when a device is removed
+        /// Overridable 'On' method called when a device is removed (for PS2 mode)
         /// </summary>
         protected void OnDeviceRemoved(EventArgs args)
         {
@@ -537,9 +554,12 @@ namespace PACEBuzz
             this.lblMinQuestionController.Text = "Clear";
             this.BackColor = Color.White;
 
-            foreach (Buzzer buzzer in this.Buzzers)
+            if (this.settings.BuzzerType == "PS2")
             {
-                buzzer.SetLights(false, false, false, false);
+                foreach (Buzzer buzzer in this.Buzzers)
+                {
+                    buzzer.SetLights(false, false, false, false);
+                }
             }
         }
 
@@ -609,15 +629,23 @@ namespace PACEBuzz
         {
             if (!this.isModalDialogOpen)
             {
-                // Did the player hit the buzz in button?
-                if (button.Red)
+                if (this.settings.BuzzerType == "PS2")
                 {
-                    this.AddPlayerToBuzzerQueue(player);
-                }
+                    // Did the player hit the buzz in button?
+                    if (button.Red)
+                    {
+                        this.AddPlayerToBuzzerQueue(player);
+                    }
 
-                if (button.Blue || button.Orange || button.Green || button.Yellow)
+                    if (button.Blue || button.Orange || button.Green || button.Yellow)
+                    {
+                        this.BuzzerCancel(player);
+                    }
+                }
+                else
                 {
-                    this.BuzzerCancel(player);
+                    // There's only one option for arcade mode
+                    this.AddPlayerToBuzzerQueue(player);
                 }
             }
         }
@@ -651,30 +679,39 @@ namespace PACEBuzz
         {
             if (this.BuzzedInPlayer != null)
             {
-                this.lblMinQuestionController.Text = "Buzz";
                 this.BackColor = Color.Red;
-                foreach (Buzzer buzzer in this.Buzzers)
+
+                if (this.settings.BuzzerType == "PS2")
                 {
-                    bool[] lights = new bool[4];
-                    for (int i = 0; i < lights.Length; i++)
+                    this.lblMinQuestionController.Text = "Buzz";
+
+                    foreach (Buzzer buzzer in this.Buzzers)
                     {
-                        lights[i] = false;
+                        bool[] lights = new bool[4];
+                        for (int i = 0; i < lights.Length; i++)
+                        {
+                            lights[i] = false;
+                        }
+
+                        if (buzzer.BuzzerIndex == this.BuzzedInPlayer.BuzzerIndex)
+                        {
+                            lights[this.BuzzedInPlayer.SubBuzzerIndex] = true;
+                        }
+
+                        buzzer.SetLights(lights[0], lights[1], lights[2], lights[3]);
                     }
 
-                    if (buzzer.BuzzerIndex == this.BuzzedInPlayer.BuzzerIndex)
+                    if (this.buzzLightTimer == null)
                     {
-                        lights[this.BuzzedInPlayer.SubBuzzerIndex] = true;
+                        this.buzzLightTimer = new System.Timers.Timer();
+                        this.buzzLightTimer.Elapsed += new ElapsedEventHandler(this.OnKeepLightActive);
+                        this.buzzLightTimer.Interval = 2000;
+                        this.buzzLightTimer.Start();
                     }
-
-                    buzzer.SetLights(lights[0], lights[1], lights[2], lights[3]);
                 }
-
-                if (this.buzzLightTimer == null)
+                else
                 {
-                    this.buzzLightTimer = new System.Timers.Timer();
-                    this.buzzLightTimer.Elapsed += new ElapsedEventHandler(this.OnKeepLightActive);
-                    this.buzzLightTimer.Interval = 2000;
-                    this.buzzLightTimer.Start();
+                    this.lblMinQuestionController.Text = "Buzz " + this.BuzzedInPlayer.SubBuzzerIndex;
                 }
             }
         }
@@ -691,22 +728,25 @@ namespace PACEBuzz
             }
             else
             {
-                Buzzer buzzer = (Buzzer)sender;
-                int subBuzzerIndex = 0;
-                List<int> indexes = new List<int>();
-                indexes.Add(0);
-                indexes.Add(1);
-                indexes.Add(2);
-                indexes.Add(3);
-
-                while (indexes.Count > 0)
+                if (this.settings.BuzzerType == "PS2")
                 {
-                    // Randomly go through players to ensure that Player 1 doesn't have the advantage in outright ties
-                    subBuzzerIndex = indexes[random.Next(indexes.Count)];
-                    indexes.Remove(subBuzzerIndex);
-                    ButtonStates button = args.Buttons[subBuzzerIndex];
-                    Player player = buzzer.Players[subBuzzerIndex];
-                    HandleRegularGameBuzzerInput(player, button);
+                    Buzzer buzzer = (Buzzer)sender;
+                    int subBuzzerIndex = 0;
+                    List<int> indexes = new List<int>();
+                    indexes.Add(0);
+                    indexes.Add(1);
+                    indexes.Add(2);
+                    indexes.Add(3);
+
+                    while (indexes.Count > 0)
+                    {
+                        // Randomly go through players to ensure that Player 1 doesn't have the advantage in outright ties
+                        subBuzzerIndex = indexes[random.Next(indexes.Count)];
+                        indexes.Remove(subBuzzerIndex);
+                        ButtonStates button = args.Buttons[subBuzzerIndex];
+                        Player player = buzzer.Players[subBuzzerIndex];
+                        HandleRegularGameBuzzerInput(player, button);
+                    }
                 }
             }
         }
@@ -716,32 +756,52 @@ namespace PACEBuzz
         /// </summary>
         private void HandleArcadeBuzzes()
         {
-            while (true)
+            Task.Run(async () =>
             {
-                try
+                while (true)
                 {
-                    this.arcadeJoystick.Poll();
-                    var datas = this.arcadeJoystick.GetBufferedData();
-                    foreach (var state in datas)
+                    try
                     {
-                        string buzzerName = state.Offset.ToString();
-                        if (buzzerName.Contains("Buttons"))
-                        {
-                            int buzzerIndex = Int32.Parse(buzzerName.Substring(7));
-                            if (state.Value > 0)
-                            {
-                                // This is a buzz
-                                this.SafePlaySound(this.soundFiles[0]);
-                            }
+                        this.arcadeJoystick.Poll();
+                        var datas = this.arcadeJoystick.GetBufferedData();
+                        List<int> indexes = new List<int>();
 
+                        foreach (var state in datas)
+                        {
+                            // Get list of buzzes, if there are more than one of them, randomly pick one
+
+                            string buzzerName = state.Offset.ToString();
+                            if (buzzerName.Contains("Buttons"))
+                            {
+                                int buzzerIndex = Int32.Parse(buzzerName.Substring(7));
+                                if (state.Value > 0)
+                                {
+                                    indexes.Add(buzzerIndex);
+                                }
+                            }
+                        }
+
+                        // In arcade mode, there's only one buzzer - TODO: Maybe let you split them up so you get different sounds
+                        var buzzer = this.Buzzers[0];
+
+                        while (indexes.Count > 0)
+                        {
+                            // Randomly go through players to ensure that Player 1 doesn't have the advantage in outright ties
+                            var subBuzzerIndex = indexes[random.Next(indexes.Count)];
+                            indexes.Remove(subBuzzerIndex);
+                            Player player = buzzer.Players[subBuzzerIndex];
+                            HandleRegularGameBuzzerInput(player, null);
                         }
                     }
+                    catch (Exception e)
+                    {
+                        // Device sometimes fails for some reason
+                        Console.WriteLine("buzzer exception: " + e);
+                    }
+
+                    await Task.Delay(1);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -777,29 +837,38 @@ namespace PACEBuzz
                 }
             }
 
-            try
+            if (this.settings.BuzzerType == "PS2")
             {
-                List<Buzzer> newBuzzers = Buzzer.FindBuzzHandsets();
-
-                int index = 0;
-                foreach (Buzzer buzzer in newBuzzers)
+                try
                 {
-                    buzzer.OnDeviceRemoved += new EventHandler(BuzzDevice_OnDeviceRemoved);
-                    buzzer.OnButtonChanged += new BuzzButtonChangedEventHandler(BuzzDevice_OnButtonChanged);
-                    buzzer.BuzzerIndex = index;
-                    index++;
-                }
+                    List<Buzzer> newBuzzers = Buzzer.FindBuzzHandsets();
 
-                this.lblBuzzersDetected.Text = (index * 4).ToString();
-                this.Buzzers = newBuzzers;
+                    int index = 0;
+                    foreach (Buzzer buzzer in newBuzzers)
+                    {
+                        buzzer.OnDeviceRemoved += new EventHandler(BuzzDevice_OnDeviceRemoved);
+                        buzzer.OnButtonChanged += new BuzzButtonChangedEventHandler(BuzzDevice_OnButtonChanged);
+                        buzzer.BuzzerIndex = index;
+                        index++;
+                    }
+
+                    this.lblBuzzersDetected.Text = (index * 4).ToString();
+                    this.Buzzers = newBuzzers;
+                    this.previousBuzzStack = new Stack<Player>();
+                    this.Reset();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Something went wrong finding the buzzers.  Try plugging the buzzers back in and/or restarting the program in administrator mode.  Refer to the help screen for more troubleshooting tips.");
+                    this.Buzzers = new List<Buzzer>();
+                    this.previousBuzzStack = new Stack<Player>();
+                }
+            }
+            else
+            {
+                this.SetupArcadeInputs();
                 this.previousBuzzStack = new Stack<Player>();
                 this.Reset();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Something went wrong finding the buzzers.  Try plugging the buzzers back in and/or restarting the program in administrator mode.  Refer to the help screen for more troubleshooting tips.");
-                this.Buzzers = new List<Buzzer>();
-                this.previousBuzzStack = new Stack<Player>();
             }
         }
 
@@ -819,10 +888,8 @@ namespace PACEBuzz
             }
             catch (Exception)
             {
-
+                Console.WriteLine("Exception");
             }
-
-            return;
         }
 
         private void OnSettingsChanged(object sender, SettingsCallbackEventArgs args)
@@ -929,19 +996,22 @@ namespace PACEBuzz
 
         private void LightCheck()
         {
-            this.Reset();
-
-            foreach (Buzzer buzzer in this.Buzzers)
+            if (this.settings.BuzzerType == "PS2")
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    bool[] lights = new bool[4];
-                    lights[i] = true;
-                    buzzer.SetLights(lights[0], lights[1], lights[2], lights[3]);
-                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(500));
-                }
-
                 this.Reset();
+
+                foreach (Buzzer buzzer in this.Buzzers)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        bool[] lights = new bool[4];
+                        lights[i] = true;
+                        buzzer.SetLights(lights[0], lights[1], lights[2], lights[3]);
+                        System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(500));
+                    }
+
+                    this.Reset();
+                }
             }
         }
 

@@ -311,7 +311,7 @@ namespace PACEBuzz.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PS2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Arcade")]
         public string buzzerType {
             get {
                 return ((string)(this["buzzerType"]));
