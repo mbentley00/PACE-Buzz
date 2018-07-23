@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using SharpDX.Multimedia;
+using SharpDX.XAudio2;
 
 namespace PACEBuzz
 {
@@ -40,8 +39,8 @@ namespace PACEBuzz
             PreviousBuzz = 4
         }
 
-        public Dictionary<string, SoundPlayer> soundFiles;
-        public SoundPlayer errorSound;
+        public List<string> soundFiles;
+        public string errorSound;
 
         private Random random = new Random();
 
@@ -143,41 +142,66 @@ namespace PACEBuzz
             this.showLastBuzzToolTip.SetToolTip(this.imgMinForceLastLight, "Light up who last buzzed");
             this.previousBuzzStack = new Stack<Player>();
 
-            this.soundFiles = new Dictionary<string, SoundPlayer>();
-            for (int i = 1; i <= 8; i++)
-            {
-                SoundPlayer player = new SoundPlayer();
-                player.SoundLocation = Path.Combine("Sounds", "beep" + i + ".wav");
-                try
-                {
-                    player.Load();
-                }
-                catch (Exception)
-                {
-                }
-
-                this.soundFiles.Add("beep" + i + ".wav", player);
-            }
-
-            this.errorSound = new SoundPlayer();
-            this.errorSound.SoundLocation = Path.Combine("Sounds", "error.wav");
-            try
-            {
-                this.errorSound.Load();
-            }
-            catch (Exception)
-            {
-            }
-
             this.ApplySettings();
             this.ResetAllLights();
             this.onSettingsChanged += new SettingsChangedEventHandler(OnSettingsChanged);
             this.onFormClosed += new FormClosedEventHandler(OnFormClosed);
+
+            // Initialize sounds
+            this.errorSound = Path.Combine("Sounds", "error.wav");
+
+            this.soundFiles = new List<string>();
+            for (int i = 1; i <= 8; i++)
+            {
+                this.soundFiles.Add(Path.Combine("Sounds", "beep" + i + ".wav"));
+            }
         }
 
         private void OnFormClosed(object sender, EventArgs args)
         {
             this.Show();
+        }
+
+        /// <summary>
+        /// Play a wav file via XAudio
+        /// </summary>
+        public static void PlayXAudioSound(object soundFile)
+        {
+            try
+            {
+                var xaudio2 = new XAudio2();
+                var masteringVoice = new MasteringVoice(xaudio2);
+
+                var stream = new SoundStream(File.OpenRead(soundFile as string));
+                var waveFormat = stream.Format;
+                var buffer = new AudioBuffer
+                {
+                    Stream = stream.ToDataStream(),
+                    AudioBytes = (int)stream.Length,
+                    Flags = BufferFlags.EndOfStream
+                };
+                stream.Close();
+
+                var sourceVoice = new SourceVoice(xaudio2, waveFormat, true);
+                sourceVoice.SubmitSourceBuffer(buffer, stream.DecodedPacketsInfo);
+                sourceVoice.Start();
+
+                while (sourceVoice.State.BuffersQueued > 0)
+                {
+                    Thread.Sleep(1);
+                }
+
+                sourceVoice.DestroyVoice();
+                sourceVoice.Dispose();
+                buffer.Stream.Dispose();
+
+                xaudio2.Dispose();
+                masteringVoice.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private void MainWindow_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -500,14 +524,14 @@ namespace PACEBuzz
                 // Play a sound and light up the lights if this is the first player to buzz
                 if (this.QueuedPlayers.Count == 1)
                 {
-                    this.FlashScreen(this.NewBuzzColor);
-                    this.SafePlaySound(player.BuzzerIndex);
                     this.BuzzedInPlayer = player;
+                    this.LightUpActivePlayer();
+                    this.SafePlaySound(this.soundFiles[player.BuzzerIndex]);
                     this.isFirstBuzzedInPlayer = true;
                     this.previousBuzzStack.Push(this.BuzzedInPlayer);
                     this.lblMinQuestionController.Text = "Buzz";
+                    this.FlashScreen(this.NewBuzzColor);
                     this.BackColor = Color.Red;
-                    this.LightUpActivePlayer();
                 }
             }
         }
@@ -567,9 +591,9 @@ namespace PACEBuzz
                 this.BuzzedInPlayer = this.QueuedPlayers[0];
                 this.isFirstBuzzedInPlayer = false;
                 this.previousBuzzStack.Push(this.BuzzedInPlayer);
-                this.FlashScreen(NextBuzzColor);
-                this.SafePlaySound(activeBuzzerIndex);
                 this.LightUpActivePlayer();
+                this.SafePlaySound(this.soundFiles[activeBuzzerIndex]);
+                this.FlashScreen(NextBuzzColor);
             }
             else
             {
@@ -702,26 +726,24 @@ namespace PACEBuzz
 
         private void SafePlayErrorSound()
         {
-            try
-            {
-                this.errorSound.Play();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("error");
-            }
+            this.SafePlaySound(this.errorSound);
         }
 
-        private void SafePlaySound(int buzzerGroup)
+        private void SafePlaySound(string soundFile)
         {
             try
             {
-                this.soundFiles[this.settings.BuzzSounds[buzzerGroup]].Play();
+                Thread thread = new Thread(new ParameterizedThreadStart(PlayXAudioSound));
+                thread.Start(soundFile);
+
+                // TODO: Dispose the thread?
             }
             catch (Exception)
             {
-                // It's possible that playing the sound will fail
+
             }
+
+            return;
         }
 
         private void OnSettingsChanged(object sender, SettingsCallbackEventArgs args)
@@ -856,9 +878,9 @@ namespace PACEBuzz
                 this.Reset();
                 this.BuzzedInPlayer = previousBuzzStack.Pop();
                 this.isFirstBuzzedInPlayer = false;
-                this.FlashScreen(NextBuzzColor);
-                this.SafePlaySound(this.BuzzedInPlayer.BuzzerIndex);
+                this.SafePlaySound(this.soundFiles[this.BuzzedInPlayer.BuzzerIndex]);
                 this.LightUpActivePlayer();
+                this.FlashScreen(NextBuzzColor);
             }
         }
 
