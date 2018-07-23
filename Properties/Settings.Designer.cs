@@ -12,7 +12,7 @@ namespace PACEBuzz.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -128,18 +128,6 @@ namespace PACEBuzz.Properties {
             }
             set {
                 this["countdownShortcutControl"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F9")]
-        public string lightCheckShortcutKey {
-            get {
-                return ((string)(this["lightCheckShortcutKey"]));
-            }
-            set {
-                this["lightCheckShortcutKey"] = value;
             }
         }
         
@@ -306,6 +294,18 @@ namespace PACEBuzz.Properties {
             }
             set {
                 this["previousBuzzShortcutControl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string lightCheckShortcutKey {
+            get {
+                return ((string)(this["lightCheckShortcutKey"]));
+            }
+            set {
+                this["lightCheckShortcutKey"] = value;
             }
         }
     }

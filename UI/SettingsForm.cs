@@ -153,8 +153,8 @@ namespace PACEBuzz
             this.chkFirstPlayerCanCancel.Enabled = this.settings.AllowBuzzerCancels;
             this.chkFirstPlayerCanCancel.Checked = this.settings.FirstPlayerCanCancel;
             this.chkQuitPrompt.Checked = this.settings.QuitPrompt;
-            this.settings.Blink = this.chkBlink.Checked;
-            this.settings.AlwaysOnTop = this.chkAlwaysOnTop.Checked;
+            this.chkBlink.Checked = this.settings.Blink;
+            this.chkAlwaysOnTop.Checked = this.settings.AlwaysOnTop;
 
             this.txtCountdownLength.Text = this.settings.CountdownLengthInSeconds.ToString();
 
