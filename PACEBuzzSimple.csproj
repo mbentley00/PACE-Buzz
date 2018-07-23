@@ -199,9 +199,6 @@
   <ItemGroup>
     <Content Include="App.ico" />
     <Content Include="play-button4.png" />
-    <Content Include="Sounds\easteregg.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Sounds\error.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

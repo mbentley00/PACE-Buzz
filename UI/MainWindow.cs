@@ -41,7 +41,6 @@ namespace PACEBuzz
         }
 
         public Dictionary<string, SoundPlayer> soundFiles;
-        public SoundPlayer easterEggSound;
         public SoundPlayer errorSound;
 
         private Random random = new Random();
@@ -77,8 +76,6 @@ namespace PACEBuzz
         private System.Timers.Timer bonusCountDownTimer;
 
         private System.Timers.Timer buzzLightTimer;
-
-        private DateTime lastEasterEggSound = DateTime.Now;
 
         /// <summary>
         /// Accessor for device class guid
@@ -160,16 +157,6 @@ namespace PACEBuzz
                 }
 
                 this.soundFiles.Add("beep" + i + ".wav", player);
-            }
-
-            this.easterEggSound = new SoundPlayer();
-            this.easterEggSound.SoundLocation = Path.Combine("Sounds", "easteregg.wav");
-            try
-            {
-                this.easterEggSound.Load();
-            }
-            catch (Exception)
-            {
             }
 
             this.errorSound = new SoundPlayer();
@@ -557,63 +544,6 @@ namespace PACEBuzz
                 {
                     this.AddPlayerToBuzzerQueue(player);
                 }
-                else if (player.EasterEggSequence == 0 && player.DidEasterEggTimeEllapse())
-                {
-                    if (button.Blue && !button.Yellow && !button.Orange && !button.Green)
-                    {
-                        player.IncrementEasterEggValue();
-                    }
-                    else
-                    {
-                        player.EasterEggSequence = 0;
-                    }
-                }
-                else if (player.EasterEggSequence == 1 && player.DidEasterEggTimeEllapse())
-                {
-                    if (button.Yellow && !button.Blue && !button.Orange && !button.Green)
-                    {
-                        player.IncrementEasterEggValue();
-                    }
-                    else
-                    {
-                        player.EasterEggSequence = 0;
-                    }
-                }
-                else if (player.EasterEggSequence == 2 && player.DidEasterEggTimeEllapse())
-                {
-                    if (button.Blue && !button.Yellow && !button.Orange && !button.Green)
-                    {
-                        player.IncrementEasterEggValue();
-                    }
-                    else
-                    {
-                        player.EasterEggSequence = 0;
-                    }
-                }
-                else if (player.EasterEggSequence == 3 && player.DidEasterEggTimeEllapse())
-                {
-                    if (button.Orange && !button.Blue && !button.Yellow && !button.Green)
-                    {
-                        player.IncrementEasterEggValue();
-                    }
-                    else
-                    {
-                        player.EasterEggSequence = 0;
-                    }
-                }
-                else if (player.EasterEggSequence == 1 && player.DidEasterEggTimeEllapse())
-                {
-                    if (button.Green && !button.Blue && !button.Orange && !button.Yellow)
-                    {
-                        player.IncrementEasterEggValue();
-                        this.SafePlayEasterEggSound();
-                        player.EasterEggSequence = 0;
-                    }
-                    else
-                    {
-                        player.EasterEggSequence = 0;
-                    }
-                }
 
                 if (button.Blue || button.Orange || button.Green || button.Yellow)
                 {
@@ -767,22 +697,6 @@ namespace PACEBuzz
                 MessageBox.Show("Something went wrong finding the buzzers.  Try plugging the buzzers back in and/or restarting the program in administrator mode.  Refer to the help screen for more troubleshooting tips.");
                 this.Buzzers = new List<Buzzer>();
                 this.previousBuzzStack = new Stack<Player>();
-            }
-        }
-
-        private void SafePlayEasterEggSound()
-        {
-            if (DateTime.Now.Subtract(this.lastEasterEggSound).TotalSeconds > 10)
-            {
-                try
-                {
-                    this.lastEasterEggSound = DateTime.Now;
-                    this.easterEggSound.Play();
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("error");
-                }
             }
         }
 
