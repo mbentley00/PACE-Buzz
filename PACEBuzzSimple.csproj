@@ -83,7 +83,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>if_lightbulb_36150.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -208,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
+    <Content Include="if_lightbulb_36150.ico" />
     <Content Include="play-button4.png" />
     <Content Include="Resources\arcade_buzz1.png" />
     <None Include="Resources\arcade_buzz2.png" />
