@@ -56,7 +56,7 @@
             // 
             this.imgMinForceLastLight.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinForceLastLight.Image = global::PACEBuzz.Properties.Resources.lighthouse_shine;
-            this.imgMinForceLastLight.Location = new System.Drawing.Point(248, 10);
+            this.imgMinForceLastLight.Location = new System.Drawing.Point(191, 9);
             this.imgMinForceLastLight.Name = "imgMinForceLastLight";
             this.imgMinForceLastLight.Size = new System.Drawing.Size(19, 17);
             this.imgMinForceLastLight.TabIndex = 26;
@@ -67,7 +67,7 @@
             // 
             this.imgMinRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinRefresh.Image = global::PACEBuzz.Properties.Resources.arrow_refresh;
-            this.imgMinRefresh.Location = new System.Drawing.Point(74, 10);
+            this.imgMinRefresh.Location = new System.Drawing.Point(256, 12);
             this.imgMinRefresh.Name = "imgMinRefresh";
             this.imgMinRefresh.Size = new System.Drawing.Size(19, 17);
             this.imgMinRefresh.TabIndex = 25;
@@ -76,7 +76,7 @@
             // 
             // lblBuzzersDetected
             // 
-            this.lblBuzzersDetected.Location = new System.Drawing.Point(52, 10);
+            this.lblBuzzersDetected.Location = new System.Drawing.Point(237, 11);
             this.lblBuzzersDetected.Name = "lblBuzzersDetected";
             this.lblBuzzersDetected.Size = new System.Drawing.Size(23, 18);
             this.lblBuzzersDetected.TabIndex = 24;
@@ -97,7 +97,7 @@
             // 
             this.imgMinLightCheck.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinLightCheck.Image = global::PACEBuzz.Properties.Resources.lightbulb;
-            this.imgMinLightCheck.Location = new System.Drawing.Point(223, 10);
+            this.imgMinLightCheck.Location = new System.Drawing.Point(166, 9);
             this.imgMinLightCheck.Name = "imgMinLightCheck";
             this.imgMinLightCheck.Size = new System.Drawing.Size(19, 17);
             this.imgMinLightCheck.TabIndex = 22;
@@ -130,7 +130,7 @@
             // 
             this.imgMinNextBuzz.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinNextBuzz.Image = global::PACEBuzz.Properties.Resources.arrow_right;
-            this.imgMinNextBuzz.Location = new System.Drawing.Point(134, 10);
+            this.imgMinNextBuzz.Location = new System.Drawing.Point(87, 9);
             this.imgMinNextBuzz.Name = "imgMinNextBuzz";
             this.imgMinNextBuzz.Size = new System.Drawing.Size(19, 17);
             this.imgMinNextBuzz.TabIndex = 18;
@@ -141,7 +141,7 @@
             // 
             this.imgMinReset.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinReset.Image = global::PACEBuzz.Properties.Resources.lightbulb_off;
-            this.imgMinReset.Location = new System.Drawing.Point(109, 10);
+            this.imgMinReset.Location = new System.Drawing.Point(62, 9);
             this.imgMinReset.Name = "imgMinReset";
             this.imgMinReset.Size = new System.Drawing.Size(19, 17);
             this.imgMinReset.TabIndex = 17;
@@ -150,7 +150,7 @@
             // 
             // lblMinBonusCountdown
             // 
-            this.lblMinBonusCountdown.Location = new System.Drawing.Point(194, 10);
+            this.lblMinBonusCountdown.Location = new System.Drawing.Point(137, 9);
             this.lblMinBonusCountdown.Name = "lblMinBonusCountdown";
             this.lblMinBonusCountdown.Size = new System.Drawing.Size(23, 18);
             this.lblMinBonusCountdown.TabIndex = 13;
@@ -162,7 +162,7 @@
             this.imgMinBonusCountdown.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgMinBonusCountdown.ErrorImage = ((System.Drawing.Image)(resources.GetObject("imgMinBonusCountdown.ErrorImage")));
             this.imgMinBonusCountdown.Image = global::PACEBuzz.Properties.Resources.clock_16;
-            this.imgMinBonusCountdown.Location = new System.Drawing.Point(171, 10);
+            this.imgMinBonusCountdown.Location = new System.Drawing.Point(112, 9);
             this.imgMinBonusCountdown.Name = "imgMinBonusCountdown";
             this.imgMinBonusCountdown.Size = new System.Drawing.Size(19, 17);
             this.imgMinBonusCountdown.TabIndex = 11;
@@ -174,13 +174,13 @@
             this.lblMinQuestionController.AutoSize = true;
             this.lblMinQuestionController.Location = new System.Drawing.Point(4, 10);
             this.lblMinQuestionController.Name = "lblMinQuestionController";
-            this.lblMinQuestionController.Size = new System.Drawing.Size(38, 14);
+            this.lblMinQuestionController.Size = new System.Drawing.Size(41, 17);
             this.lblMinQuestionController.TabIndex = 2;
             this.lblMinQuestionController.Text = "Clear";
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(391, 28);

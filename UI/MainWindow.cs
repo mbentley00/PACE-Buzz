@@ -76,6 +76,8 @@ namespace PACEBuzz
         private int bonusCountDownTime;
         private System.Timers.Timer bonusCountDownTimer;
 
+        private System.Timers.Timer arcadeBuzzTimer;
+
         private System.Timers.Timer buzzLightTimer;
 
         /// <summary>
@@ -117,6 +119,11 @@ namespace PACEBuzz
             get;
             set;
         }
+
+        /// <summary>
+        /// Text that will be displayed in lblMinQuestionController
+        /// </summary>
+        private string questionControllerText = "Clear";
 
         public MainWindow()
         {
@@ -161,6 +168,9 @@ namespace PACEBuzz
             }
 
             this.CheckIfBuzzHandsetsPresent();
+
+            // Play the buzz on load to get the sound cached
+            this.SafePlaySound(this.soundFiles[7]);
         }
 
         /// <summary>
@@ -202,17 +212,16 @@ namespace PACEBuzz
                     }
                 }
 
-                this.lblBuzzersDetected.Text = buzzerCount + " (max)";
+                this.lblBuzzersDetected.Text = buzzerCount.ToString();
                 buzzer.BuzzerIndex = 0;
                 buzzer.AddPlayers(buzzerCount);
                 this.Buzzers.Add(buzzer);
             }
 
-            // TODO: Only run this once
-            HandleArcadeBuzzes();
-
-            //Thread arcadeThread = new Thread(new ThreadStart(HandleArcadeBuzzes));
-            //arcadeThread.Start();
+            this.arcadeBuzzTimer = new System.Timers.Timer();
+            this.arcadeBuzzTimer.Elapsed += new ElapsedEventHandler(this.HandleArcadeBuzzes);
+            this.arcadeBuzzTimer.Interval = 1;
+            this.arcadeBuzzTimer.Start();
         }
 
         private void OnFormClosed(object sender, EventArgs args)
@@ -419,6 +428,8 @@ namespace PACEBuzz
         /// <param name="m">Message from Windows</param>
         protected override void WndProc(ref Message m)
         {
+            this.lblMinQuestionController.Text = this.questionControllerText; // TODO
+
             if (m.Msg == Win32Usb.WM_DEVICECHANGE)	// we got a device change message! A USB device was inserted or removed
             {
                 switch (m.WParam.ToInt32())	// Check the W parameter to see if a device was inserted or removed
@@ -551,7 +562,7 @@ namespace PACEBuzz
         {
             this.BuzzedInPlayer = null;
             this.QueuedPlayers.Clear();
-            this.lblMinQuestionController.Text = "Clear";
+            this.questionControllerText = "Clear";
             this.BackColor = Color.White;
 
             if (this.settings.BuzzerType == "PS2")
@@ -595,7 +606,16 @@ namespace PACEBuzz
                     this.SafePlaySound(this.soundFiles[player.BuzzerIndex]);
                     this.isFirstBuzzedInPlayer = true;
                     this.previousBuzzStack.Push(this.BuzzedInPlayer);
-                    this.lblMinQuestionController.Text = "Buzz";
+
+                    if (this.settings.BuzzerType == "PS2")
+                    {
+                        questionControllerText = "Buzz";
+                    }
+                    else
+                    {
+                        questionControllerText = "Buzz: " + (this.BuzzedInPlayer.SubBuzzerIndex + 1);
+                    }
+
                     this.FlashScreen(this.NewBuzzColor);
                     this.BackColor = Color.Red;
                 }
@@ -683,7 +703,7 @@ namespace PACEBuzz
 
                 if (this.settings.BuzzerType == "PS2")
                 {
-                    this.lblMinQuestionController.Text = "Buzz";
+                    questionControllerText = "Buzz";
 
                     foreach (Buzzer buzzer in this.Buzzers)
                     {
@@ -711,7 +731,7 @@ namespace PACEBuzz
                 }
                 else
                 {
-                    this.lblMinQuestionController.Text = "Buzz " + this.BuzzedInPlayer.SubBuzzerIndex;
+                    questionControllerText = "Buzz: " + (this.BuzzedInPlayer.SubBuzzerIndex + 1);
                 }
             }
         }
@@ -754,54 +774,46 @@ namespace PACEBuzz
         /// <summary>
         /// Looks for buzzes on the arcade controllers
         /// </summary>
-        private void HandleArcadeBuzzes()
+        private void HandleArcadeBuzzes(object source, ElapsedEventArgs args)
         {
-            Task.Run(async () =>
+            try
             {
-                while (true)
+                this.arcadeJoystick.Poll();
+                var datas = this.arcadeJoystick.GetBufferedData();
+                List<int> indexes = new List<int>();
+
+                foreach (var state in datas)
                 {
-                    try
+                    // Get list of buzzes, if there are more than one of them, randomly pick one
+
+                    string buzzerName = state.Offset.ToString();
+                    if (buzzerName.Contains("Buttons"))
                     {
-                        this.arcadeJoystick.Poll();
-                        var datas = this.arcadeJoystick.GetBufferedData();
-                        List<int> indexes = new List<int>();
-
-                        foreach (var state in datas)
+                        int buzzerIndex = Int32.Parse(buzzerName.Substring(7));
+                        if (state.Value > 0)
                         {
-                            // Get list of buzzes, if there are more than one of them, randomly pick one
-
-                            string buzzerName = state.Offset.ToString();
-                            if (buzzerName.Contains("Buttons"))
-                            {
-                                int buzzerIndex = Int32.Parse(buzzerName.Substring(7));
-                                if (state.Value > 0)
-                                {
-                                    indexes.Add(buzzerIndex);
-                                }
-                            }
-                        }
-
-                        // In arcade mode, there's only one buzzer - TODO: Maybe let you split them up so you get different sounds
-                        var buzzer = this.Buzzers[0];
-
-                        while (indexes.Count > 0)
-                        {
-                            // Randomly go through players to ensure that Player 1 doesn't have the advantage in outright ties
-                            var subBuzzerIndex = indexes[random.Next(indexes.Count)];
-                            indexes.Remove(subBuzzerIndex);
-                            Player player = buzzer.Players[subBuzzerIndex];
-                            HandleRegularGameBuzzerInput(player, null);
+                            indexes.Add(buzzerIndex);
                         }
                     }
-                    catch (Exception e)
-                    {
-                        // Device sometimes fails for some reason
-                        Console.WriteLine("buzzer exception: " + e);
-                    }
-
-                    await Task.Delay(1);
                 }
-            });
+
+                // In arcade mode, there's only one buzzer - TODO: Maybe let you split them up so you get different sounds
+                var buzzer = this.Buzzers[0];
+
+                while (indexes.Count > 0)
+                {
+                    // Randomly go through players to ensure that Player 1 doesn't have the advantage in outright ties
+                    var subBuzzerIndex = indexes[random.Next(indexes.Count)];
+                    indexes.Remove(subBuzzerIndex);
+                    Player player = buzzer.Players[subBuzzerIndex];
+                    HandleRegularGameBuzzerInput(player, null);
+                }
+            }
+            catch (Exception e)
+            {
+                // Device sometimes fails for some reason
+                Console.WriteLine("buzzer exception: " + e);
+            }
         }
 
         /// <summary>
