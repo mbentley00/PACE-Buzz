@@ -68,10 +68,14 @@
             this.chkFirstPlayerCanCancel = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkQuitPrompt = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.opPS2 = new System.Windows.Forms.RadioButton();
+            this.opArcade = new System.Windows.Forms.RadioButton();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgPlaySound)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox4
@@ -81,7 +85,7 @@
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.cmbSound);
             this.groupBox4.Controls.Add(this.cmbBuzzerGroup);
-            this.groupBox4.Location = new System.Drawing.Point(14, 13);
+            this.groupBox4.Location = new System.Drawing.Point(14, 97);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(794, 95);
             this.groupBox4.TabIndex = 25;
@@ -159,7 +163,7 @@
             this.groupBox3.Controls.Add(this.chkResetShift);
             this.groupBox3.Controls.Add(this.cmbResetKey);
             this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Location = new System.Drawing.Point(15, 114);
+            this.groupBox3.Location = new System.Drawing.Point(15, 198);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(544, 232);
             this.groupBox3.TabIndex = 26;
@@ -456,7 +460,7 @@
             // 
             // cmdCancel
             // 
-            this.cmdCancel.Location = new System.Drawing.Point(628, 349);
+            this.cmdCancel.Location = new System.Drawing.Point(628, 433);
             this.cmdCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(87, 32);
@@ -467,7 +471,7 @@
             // 
             // cmdSave
             // 
-            this.cmdSave.Location = new System.Drawing.Point(721, 349);
+            this.cmdSave.Location = new System.Drawing.Point(721, 433);
             this.cmdSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmdSave.Name = "cmdSave";
             this.cmdSave.Size = new System.Drawing.Size(87, 32);
@@ -497,7 +501,7 @@
             this.groupBox1.Controls.Add(this.chkBlink);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtCountdownLength);
-            this.groupBox1.Location = new System.Drawing.Point(565, 114);
+            this.groupBox1.Location = new System.Drawing.Point(565, 198);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(243, 232);
             this.groupBox1.TabIndex = 29;
@@ -516,11 +520,47 @@
             this.chkQuitPrompt.UseVisualStyleBackColor = true;
             this.chkQuitPrompt.CheckedChanged += new System.EventHandler(this.chkQuitPrompt_CheckedChanged);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.opArcade);
+            this.groupBox2.Controls.Add(this.opPS2);
+            this.groupBox2.Location = new System.Drawing.Point(15, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(790, 79);
+            this.groupBox2.TabIndex = 30;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Buzzer Type";
+            // 
+            // opPS2
+            // 
+            this.opPS2.AutoSize = true;
+            this.opPS2.Checked = true;
+            this.opPS2.Location = new System.Drawing.Point(11, 35);
+            this.opPS2.Name = "opPS2";
+            this.opPS2.Size = new System.Drawing.Size(113, 21);
+            this.opPS2.TabIndex = 0;
+            this.opPS2.TabStop = true;
+            this.opPS2.Text = "PlayStation 2";
+            this.opPS2.UseVisualStyleBackColor = true;
+            this.opPS2.CheckedChanged += new System.EventHandler(this.opPS2_CheckedChanged);
+            // 
+            // opArcade
+            // 
+            this.opArcade.AutoSize = true;
+            this.opArcade.Location = new System.Drawing.Point(135, 35);
+            this.opArcade.Name = "opArcade";
+            this.opArcade.Size = new System.Drawing.Size(74, 21);
+            this.opArcade.TabIndex = 1;
+            this.opArcade.Text = "Arcade";
+            this.opArcade.UseVisualStyleBackColor = true;
+            this.opArcade.CheckedChanged += new System.EventHandler(this.opArcade_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(820, 394);
+            this.ClientSize = new System.Drawing.Size(820, 478);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cmdCancel);
             this.Controls.Add(this.cmdSave);
@@ -533,6 +573,7 @@
             this.Name = "SettingsForm";
             this.Text = "Settings - PACEBuzz";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsForm_FormClosed);
+            this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgPlaySound)).EndInit();
@@ -540,6 +581,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -585,5 +628,8 @@
         private System.Windows.Forms.CheckBox chkPreviousBuzzShift;
         private System.Windows.Forms.ComboBox cmbPreviousBuzzShortcutKey;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton opArcade;
+        private System.Windows.Forms.RadioButton opPS2;
     }
 }

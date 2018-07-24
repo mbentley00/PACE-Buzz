@@ -2,8 +2,8 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
-    <PublishUrlHistory />
-    <InstallUrlHistory />
+    <PublishUrlHistory>ftp://ftp.doc-ent.com/</PublishUrlHistory>
+    <InstallUrlHistory>http://www.doc-ent.com/pace_buzz/</InstallUrlHistory>
     <SupportUrlHistory />
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />

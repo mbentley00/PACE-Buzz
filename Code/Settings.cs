@@ -154,6 +154,12 @@ namespace PACEBuzz
             set;
         }
 
+        public string BuzzerType
+        {
+            get;
+            set;
+        }
+
         public SettingsWrapper()
         {
         }
@@ -186,6 +192,7 @@ namespace PACEBuzz
             PACEBuzz.Properties.Settings.Default.countdownLengthInSeconds = this.CountdownLengthInSeconds;
             PACEBuzz.Properties.Settings.Default.firstPlayerCanCancel = this.FirstPlayerCanCancel;
             PACEBuzz.Properties.Settings.Default.quitPrompt = this.QuitPrompt;
+            PACEBuzz.Properties.Settings.Default.buzzerType = this.BuzzerType;
 
             PACEBuzz.Properties.Settings.Default.Save();
         }
@@ -216,6 +223,7 @@ namespace PACEBuzz
             s.CountdownLengthInSeconds = PACEBuzz.Properties.Settings.Default.countdownLengthInSeconds;
             s.QuitPrompt = PACEBuzz.Properties.Settings.Default.quitPrompt;
             s.FirstPlayerCanCancel = PACEBuzz.Properties.Settings.Default.firstPlayerCanCancel;
+            s.BuzzerType = PACEBuzz.Properties.Settings.Default.buzzerType;
 
             return s;
         }

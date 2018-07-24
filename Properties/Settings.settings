@@ -81,5 +81,8 @@
     <Setting Name="lightCheckShortcutKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="buzzerType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PS2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
