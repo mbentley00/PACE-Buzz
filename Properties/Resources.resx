@@ -145,11 +145,17 @@
   <data name="undo_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\undo_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="gear_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gear_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arcade_buzz1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arcade_buzz1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lighthouse_shine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lighthouse_shine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="whoopsy_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\whoopsy_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="gear_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gear_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -166,7 +172,7 @@
   <data name="arrow_right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="lighthouse_shine" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lighthouse_shine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arcade_buzz2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arcade_buzz2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -209,6 +209,8 @@
   <ItemGroup>
     <Content Include="App.ico" />
     <Content Include="play-button4.png" />
+    <Content Include="Resources\arcade_buzz1.png" />
+    <None Include="Resources\arcade_buzz2.png" />
     <Content Include="Sounds\error.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -36,6 +36,13 @@ namespace PACEBuzz
 
         private void About_Load(object sender, EventArgs e)
         {
+            lblArcadeTroubleshooting.Text =
+@"Troubleshooting:
+-If some buzzers work but not all, check that wires are connected correctly and plugged in securely.
+-Run as an administrator.
+-Check for updated versions of this program.
+-If no sounds, make sure the Sounds directory exists in the same directory as PACEBuzz.exe.";
+
             this.lblTroubleshooting.Text = 
 @"-Try plugging the buzzers into a different USB port.
 
@@ -49,7 +56,7 @@ namespace PACEBuzz
             this.txtLicense.Text =
 @"This software is licensed under the MIT License.
 
-Copyright (c) 2016 Partnership for Academic Competition Excellence
+Copyright (c) 2016-2018 Partnership for Academic Competition Excellence
 http://www.pace-nsc.org
 
 Buzzer drivers based on code written by Ashley Deakin available at http://www.developerfusion.com/article/84338/making-usb-c-friendly/
@@ -75,10 +82,34 @@ THE SOFTWARE.";
 
         private void cmdVisitPACE_Click(object sender, EventArgs e)
         {
+        }
+
+        private void cmdVisitPACE_Click_1(object sender, EventArgs e)
+        {
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = "explorer.exe";
                 p.StartInfo.Arguments = "http://www.pace-nsc.org";
+                p.Start();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (Process p = new Process())
+            {
+                p.StartInfo.FileName = "explorer.exe";
+                p.StartInfo.Arguments = "https://github.com/mbentley00/PACE-Buzz";
+                p.Start();
+            }
+        }
+
+        private void cmdStickers_Click(object sender, EventArgs e)
+        {
+            using (Process p = new Process())
+            {
+                p.StartInfo.FileName = "explorer.exe";
+                p.StartInfo.Arguments = "https://www.amazon.com/Avery-Self-Adhesive-Removable-Labels-Diameter/dp/B00007LVE0";
                 p.Start();
             }
         }

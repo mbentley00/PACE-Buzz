@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label3.Text" xml:space="preserve">
-    <value>To use, simply plug in one or more USB buzzers from the Buzz series of videogames for the Playstation 2.  You can find copies of the game for sale on Amazon.  Look for new copies, as used copies almost never come with a set of buzzers (despite what the listing may say).</value>
+  <data name="label2.Text" xml:space="preserve">
+    <value>PACEBuzz is a quizbowl buzzer program provided for free by the Partnership for Academic Competition Excellence. It works with two types of buzzing devices. The first are Playstation 2 USB buzzers for the Buzz series of games. The second are arcade buttons and control boards that can be purchased as a kit on Amazon. See the appropriate tabs for more information.</value>
   </data>
   <data name="label4.Text" xml:space="preserve">
     <value>Players buzz in by pressing the big red button on the device.  If the system is accepting buzzes, their light will light up.  The moderator can clear all buzzes, or can hit the next buzz button to advance to the next buzz if one exists.  Players can press any of the other buttons to clear their position in the queue if cancels are enabled.</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>To use, simply plug in one or more USB buzzers from the Buzz series of videogames for the Playstation 2.  You can find copies of the game for sale on Amazon.  Look for new copies, as used copies almost never come with a set of buzzers (despite what the listing may say).</value>
+  </data>
+  <data name="label10.Text" xml:space="preserve">
+    <value>Once you have the cables plugged in, connect them to the PC and boot this program. Match each button to the number displayed when you buzz. Add a sticker to the button with that number. Now, when players buzz they can match their label to what the moderator calls out. Note that in this mode there won't be lights on each buzzer.</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value>In arcade mode, you will need to purchase an Easyget Zero Delay arcade board. Click on the button below to find one on Amazon. This kit will come with a number of parts. The important ones are the circuit board, the action buttons, and the wires bewteen the boards, buttons and PC.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
