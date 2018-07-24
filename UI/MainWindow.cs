@@ -154,7 +154,6 @@ namespace PACEBuzz
             this.previousBuzzStack = new Stack<Player>();
 
             this.ApplySettings();
-            this.ResetAllLights();
             this.onSettingsChanged += new SettingsChangedEventHandler(OnSettingsChanged);
             this.onFormClosed += new FormClosedEventHandler(OnFormClosed);
 
@@ -168,6 +167,7 @@ namespace PACEBuzz
             }
 
             this.CheckIfBuzzHandsetsPresent();
+            this.ResetAllLights();
 
             // Play the buzz on load to get the sound cached
             this.SafePlaySound(this.soundFiles[7]);
@@ -216,6 +216,12 @@ namespace PACEBuzz
                 buzzer.BuzzerIndex = 0;
                 buzzer.AddPlayers(buzzerCount);
                 this.Buzzers.Add(buzzer);
+            }
+
+            if (this.arcadeBuzzTimer != null)
+            {
+                this.arcadeBuzzTimer.Stop();
+                this.arcadeBuzzTimer.Dispose();
             }
 
             this.arcadeBuzzTimer = new System.Timers.Timer();
@@ -419,6 +425,15 @@ namespace PACEBuzz
             if (string.IsNullOrWhiteSpace(this.settings.BuzzerType))
             {
                 this.settings.BuzzerType = "PS2";
+            }
+
+            if (this.settings.BuzzerType == "PS2")
+            {
+                this.imgMinLightCheck.Visible = true;
+            }
+            else
+            {
+                this.imgMinLightCheck.Visible = false;
             }
         }
 
@@ -868,6 +883,13 @@ namespace PACEBuzz
                     this.Buzzers = newBuzzers;
                     this.previousBuzzStack = new Stack<Player>();
                     this.Reset();
+
+                    // Get rid of any handles for the arcade buzzers
+                    if (this.arcadeBuzzTimer != null)
+                    {
+                        this.arcadeBuzzTimer.Stop();
+                        this.arcadeBuzzTimer.Dispose();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -909,6 +931,8 @@ namespace PACEBuzz
             this.isModalDialogOpen = false;
             this.settings = args.ModifiedSettings;
             this.ApplySettings();
+            this.CheckIfBuzzHandsetsPresent();
+            this.ResetAllLights();
         }
 
         private void StartBonusCountdown()
